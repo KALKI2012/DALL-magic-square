@@ -69,11 +69,12 @@ The generated squares are **perfect magic squares**: all rows, columns, and both
 This project is open‑source under the **MIT License**.  
 Feel free to use, modify, and distribute with attribution.
 
-## 快速体验
-1. 下载仓库中的 `dall_demo.html` 文件；
-2. 用浏览器直接打开（推荐Chrome/Firefox）；
-3. 在页面中输入D值（≥3的奇数，如3），点击「生成」即可查看维度生成效果与向量路径。
+## Quick Experience
 
-### 体验说明
-- HTML页面为离线版本，无需联网、无需部署，本地即可运行；
-- 支持自定义D值，实时查看不同维度下的幻方结构与全局闭环验证结果。
+1. Download the `dall_demo.html` file from the repository;
+2. Open it directly in a browser (Chrome/Firefox recommended);
+3. Enter an odd number D (D ≥ 3, e.g., 3) and click "Generate" to view the dimensional generation effect and vector paths.
+
+### Experience Notes
+- The HTML page works offline – no internet connection or deployment required.
+- It supports custom D values, allowing you to explore the magic square structure and global closure verification results in real time.
