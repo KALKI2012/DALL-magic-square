@@ -43,9 +43,12 @@ The DALL algorithm uses a recursive modular function:
 $$
 f(N) = 
 \begin{cases}
-N + 1, & N \not\equiv 0 \pmod{D} \\
-(N + \varphi(k)) \bmod D^2, & N \equiv 0 \pmod{D}
+(N + 1) \mod D^2, & N \not\equiv 0 \pmod{D} \\
+(N + \Phi(k)) \mod D^2, & N \equiv 0 \pmod{D}
 \end{cases}
+$$
+$$
+\Phi(k) = mD + k, \quad m \in \{1, 2, \dots, k\}
 $$
 
 where `k` is the vector level (V1→k=1, V2→k=2, V3→k=3) and `φ(k) = mD + k` with `m ∈ {1, 2, ..., k}`. This gives:
