@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星云算法·DALL 模块验证平台</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+        
+        .formula-display {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 3px solid #667eea;
+            text-align: center;
+        }
+        .formula-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        .formula-line {
+            font-family: 'Courier New', monospace;
+            font-size: 28px;
+            color: #333;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        .formula-input {
+            display: inline-block;
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            font-size: 24px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #667eea;
+            background-color: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .formula-input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        .formula-equal {
+            font-size: 28px;
+            margin: 0 10px;
+        }
+        .formula-params {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #666;
+        }
+        .param-item {
+            display: inline-block;
+            margin: 0 20px;
+        }
+        .param-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 22px;
+        }
+        
+        .input-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 10px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        #d-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 60px;
+            text-align: center;
+        }
+        button {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 18px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .result {
+            margin-top: 30px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .matrix {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 700px;
+        }
+        .magic-grid {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        .magic-grid td {
+            border: 2px solid #667eea;
+            padding: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: white;
+            min-width: 30px;
+            width: auto;
+            height: auto;
+            min-height: 30px;
+            transition: background-color 0.2s;
+            aspect-ratio: 1;
+        }
+        .magic-grid td:hover {
+            background-color: #e9ecef;
+        }
+        .magic-grid .core-cell {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+        }
+        .magic-grid .core-cell:hover {
+            background-color: #ffeeba;
+        }
+        .download-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .download-btn {
+            display: inline-block;
+            width: auto;
+            margin: 0 10px;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+        .loading {
+            text-align: center;
+            padding: 30px;
+            font-size: 22px;
+            color: #667eea;
+        }
+        .verification {
+            margin-top: 30px;
+        }
+        .verification-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            margin: 8px 0;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .verification-item.pass {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        .verification-item.fail {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        .result-badge {
+            font-weight: bold;
+        }
+        .result-badge.pass {
+            color: #28a745;
+        }
+        .result-badge.fail {
+            color: #dc3545;
+        }
+        .final-result {
+            text-align: center;
+            padding: 25px;
+            margin-top: 25px;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .final-result.pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .final-result.fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+        .cell-info {
+            position: absolute;
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            max-width: 400px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        .cell-info.show {
+            display: block;
+        }
+        .cell-info-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        .cell-info-content {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.4;
+        }
+        .vector-v1 {
+            background: linear-gradient(135deg, #d1ecf1 0%, #d1ecf1 100%) !important;
+            border-color: #17a2b8 !important;
+        }
+        .vector-v2 {
+            background: linear-gradient(135deg, #d4edda 0%, #d4edda 100%) !important;
+            border-color: #28a745 !important;
+        }
+        .vector-v3 {
+            background: linear-gradient(135deg, #f8d7da 0%, #f8d7da 100%) !important;
+            border-color: #dc3545 !important;
+        }
+        .vector-v4 {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%) !important;
+            border-color: #ff8c00 !important;
+        }
+        .vector-v1.vector-v2 {
+            background: linear-gradient(135deg, #d1ecf1 0%, #d4edda 100%) !important;
+        }
+        .vector-v1.vector-v3 {
+            background: linear-gradient(135deg, #d1ecf1 0%, #f8d7da 100%) !important;
+        }
+        .vector-v1.vector-v4 {
+            background: linear-gradient(135deg, #d1ecf1 0%, #fff3cd 100%) !important;
+        }
+        .vector-v2.vector-v3 {
+            background: linear-gradient(135deg, #d4edda 0%, #f8d7da 100%) !important;
+        }
+        .vector-v2.vector-v4 {
+            background: linear-gradient(135deg, #d4edda 0%, #fff3cd 100%) !important;
+        }
+        .vector-v3.vector-v4 {
+            background: linear-gradient(135deg, #f8d7da 0%, #fff3cd 100%) !important;
+        }
+        #vector-paths-content {
+            word-wrap: break-word;
+            white-space: normal;
+        }
+        #vector-paths-content div {
+            overflow-wrap: break-word;
+            word-break: break-all;
+            white-space: normal;
+        }
+        #vector-paths-content span {
+            font-family: 'Roboto Mono', 'Consolas', 'Monaco', 'Source Code Pro', 'SF Mono', 'Courier New', monospace;
+            letter-spacing: -0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DALL<span style="margin: 0 8px;">•</span>星云算法  完美幻方生成系统<br><span style="font-size: 20px; color: #666;">DALL • Nebula Algorithm  Perfect Magic Square Generator</span></h1>
+        <p class="subtitle">基于破译洛书论文《奇数阶幻方的创立规则与关系框架》中四维度向量的递归公式<br>Based on the four-dimensional vector recursive formula in the paper "Creation Rules and Relationship Framework of Odd-Order Magic Squares"</p>
+        
+        <div class="formula-display">
+            <div class="formula-title">
+                <svg width="28" height="28" viewBox="0 0 100 100" style="vertical-align: middle; margin-right: 8px; display: inline-block;">
+                    <polygon points="50,10 90,80 10,80" fill="none" stroke="#667eea" stroke-width="6"/>
+                    <polygon points="50,90 10,20 90,20" fill="none" stroke="#764ba2" stroke-width="6"/>
+                    <circle cx="50" cy="50" r="8" fill="#c41e3a"/>
+                </svg>
+                DALL 系统（洛书）核心公式<br><span style="font-size: 18px; color: #666;">DALL System (Lo Shu) Core Formula</span>
+            </div>
+            
+            <div style="margin: 15px 0; text-align: center; line-height: 1.4; font-weight: bold; color: #c41e3a;">
+                <div style="margin-bottom: 20px; font-size: 28px;">
+                    \[ f(N) = \begin{cases}
+                        (N + 1) \mod D^2, & \text{当 } N \not\equiv 0 \pmod{D}\\
+                        (N + \Phi(k)) \mod D^2, & \text{当 } N \equiv 0 \pmod{D}
+                    \end{cases} \]
+                </div>
+                <div style="margin-top: 15px; font-size: 24px;">
+                    \[ \Phi(k) = mD + k, \quad m \in \{1, 2, \ldots, k\} \]
+                </div>
+                <div style="margin-top: 15px; font-size: 20px; color: #1e88e5;">
+                    核心变量：<br><span style="font-size: 16px;">Core Variable:</span>
+                    <span style="font-weight: bold; font-size: 24px; color: #c41e3a;">D</span> = <span style="font-weight: bold; font-size: 24px; color: #c41e3a;">"</span><span id="mod-d-value" style="font-weight: bold; font-size: 24px; color: #c41e3a;">3</span><span style="font-weight: bold; font-size: 24px; color: #c41e3a;">"</span>, &nbsp; D² = <span id="formula-d2">9</span>
+                </div>
+            </div>
+            
+            <div class="formula-params" style="margin-top: 20px;">
+                <div class="param-item">单向量和（幻和）: <span class="param-value" id="param-sum">15</span><br><span style="font-size: 14px; color: #666;">Single Vector Sum (Magic Sum)</span></div>
+                <div class="param-item">矩阵和: <span class="param-value" id="param-matrix-sum">45</span><br><span style="font-size: 14px; color: #666;">Matrix Sum</span></div>
+                <div class="param-item">体总和: <span class="param-value" id="param-volume-sum">135</span><br><span style="font-size: 14px; color: #666;">Volume Sum</span></div>
+            </div>
+        </div>
+        
+        <div class="result" id="result-section" style="display: none;">
+            <div id="magic-square" class="matrix">
+                <div class="section-title" style="text-align: center;">生成D=<span id="display-d"></span>的完美幻方</div>
+            </div>
+            
+            <div id="cell-info" class="cell-info">
+                <div class="cell-info-title">📊 节点信息</div>
+                <div class="cell-info-content" id="cell-info-content">
+                    鼠标悬停在节点上查看信息
+                </div>
+            </div>
+            
+            <div id="download-section" class="download-section" style="display: none;">
+                <button id="download-image-btn" class="download-btn">📷 下载矩阵图片<br><span style="font-size: 12px;">📷 Download Matrix Image</span></button>
+                <button id="download-process-btn" class="download-btn">📄 下载运算过程<br><span style="font-size: 12px;">📄 Download Calculation Process</span></button>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <label for="d-slider">选择幻方阶数 D（奇数）:<br><span style="font-size: 14px; font-weight: normal; color: #666;">Select Magic Square Order D (Odd):</span></label>
+            <div class="slider-container">
+                <input type="range" id="d-slider" min="3" max="99" step="2" value="3">
+                <input type="number" id="d-input" class="formula-input" value="3" min="3" max="99" step="2" style="width: 60px; height: 40px; font-size: 24px; font-style: normal; color: #1e88e5; font-weight: bold;">
+            </div>
+        </div>
+        
+        <button id="generate-btn">✨ 生成幻方<br><span style="font-size: 14px;">✨ Generate Magic Square</span></button>
+        
+        <div id="vector-paths" style="margin-top: 30px; display: none;">
+            <div class="section-title">向量递归路径<br><span style="font-size: 14px; color: #666;">Vector Recursive Paths</span></div>
+            <div id="vector-paths-content"></div>
+        </div>
+        
+        <div class="verification" style="margin-top: 30px;">
+            <div class="section-title">幻方合规性验证<br><span style="font-size: 14px; color: #666;">Magic Square Compliance Verification</span></div>
+            <div id="verification-result"></div>
+        </div>
+        
+        <div id="final-result" class="final-result"></div>
+        
+        <div class="footer">
+            <p>Zenodo DOI: 10.5281/zenodo.15301287</p>
+        </div>
+    </div>
+    
+    <script>
+        let currentD = 3;
+        let currentMagicSquare = null;
+        let generationSteps = [];
+
+        function getCoreParameters(D) {
+            return {
+                D: D,
+                D_squared: D * D,
+                magic_sum: D * (D * D + 1) / 2
+            };
+        }
+
+        function generateAllVectors(D) {
+            const vectors = {
+                v4: { step: 1, name: 'V4' },
+                v1: [
+                    { step: 1 * D + 1, name: 'V1' }
+                ],
+                v2: [
+                    { step: 1 * D + 2, name: 'V2a' },
+                    { step: 2 * D + 2, name: 'V2b' }
+                ],
+                v3: [
+                    { step: 1 * D + 3, name: 'V3a' },
+                    { step: 2 * D + 3, name: 'V3b' },
+                    { step: 3 * D + 3, name: 'V3c' }
+                ]
+            };
+            return vectors;
+        }
+
+        function runVectorPath(startN, step, D) {
+            const D_squared = D * D;
+            const path = [];
+            const visited = new Set();
+            let current = startN;
+            const originalStart = startN;
+            
+            while (!visited.has(current)) {
+                visited.add(current);
+                path.push(current);
+                current = (current + step - 1) % D_squared + 1;
+            }
+            
+            // 确保路径回到起点，形成闭环
+            if (path.length > 0 && path[path.length - 1] !== originalStart) {
+                path.push(originalStart);
+            }
+            
+            return path;
+        }
+
+        function weaveMagicSquare(D) {
+            if (D % 2 === 0) {
+                throw new Error("D 必须是奇数");
+            }
+            
+            const D_squared = D * D;
+            const square = Array(D).fill().map(() => Array(D).fill(0));
+            const positionMap = new Map();
+            const vectors = generateAllVectors(D);
+            
+            // 生成所有向量路径
+            const allPaths = [];
+            
+            // V4 路径
+            allPaths.push({ path: runVectorPath(1, vectors.v4.step, D), name: vectors.v4.name, level: 0, start: 1 });
+            
+            // 1起点的路径
+            // V1 路径 - 从1开始的递归
+            vectors.v1.forEach(v => {
+                allPaths.push({ path: runVectorPath(1, v.step, D), name: v.name, level: 1, start: 1 });
+            });
+            // V2 路径 - 从1开始的递归
+            vectors.v2.forEach(v => {
+                allPaths.push({ path: runVectorPath(1, v.step, D), name: v.name, level: 2, start: 1 });
+            });
+            // V3 路径 - 从1开始的递归
+            vectors.v3.forEach(v => {
+                allPaths.push({ path: runVectorPath(1, v.step, D), name: v.name, level: 3, start: 1 });
+            });
+            
+            // 2起点的路径
+            // V2 路径 - 从2开始的递归
+            vectors.v2.forEach(v => {
+                allPaths.push({ path: runVectorPath(2, v.step, D), name: v.name + '(2)', level: 2, start: 2 });
+            });
+            // V3 路径 - 从2开始的递归
+            vectors.v3.forEach(v => {
+                allPaths.push({ path: runVectorPath(2, v.step, D), name: v.name + '(2)', level: 3, start: 2 });
+            });
+            
+            // 3起点的路径
+            // V3 路径 - 从3开始的递归
+            vectors.v3.forEach(v => {
+                allPaths.push({ path: runVectorPath(3, v.step, D), name: v.name + '(3)', level: 3, start: 3 });
+            });
+            
+            // 编织过程：按层级和顺序填充
+            const weaveOrder = [];
+            allPaths.forEach((vector, vectorIndex) => {
+                vector.path.forEach((num, stepIndex) => {
+                    weaveOrder.push({
+                        num: num,
+                        vector: vector.name,
+                        level: vector.level,
+                        start: vector.start,
+                        vectorIndex: vectorIndex,
+                        stepIndex: stepIndex
+                    });
+                });
+            });
+            
+            // 按起点、层级排序，层级相同按向量索引和步骤索引排序
+            weaveOrder.sort((a, b) => {
+                if (a.start !== b.start) {
+                    return a.start - b.start;
+                }
+                if (a.level !== b.level) {
+                    return a.level - b.level;
+                }
+                if (a.vectorIndex !== b.vectorIndex) {
+                    return a.vectorIndex - b.vectorIndex;
+                }
+                return a.stepIndex - b.stepIndex;
+            });
+            
+            // 填充矩阵
+            let fillOrder = 1;
+            const filled = new Set();
+            
+            for (const item of weaveOrder) {
+                if (!filled.has(item.num)) {
+                    filled.add(item.num);
+                    
+                    // 找到合适的位置
+                    let row, col;
+                    if (item.num === 1) {
+                        row = 0;
+                        col = Math.floor(D / 2);
+                    } else {
+                        // 基于前一个数的位置
+                        const prevNum = fillOrder - 1;
+                        if (positionMap.has(prevNum)) {
+                            const prevPos = positionMap.get(prevNum);
+                            
+                            // 基础步进
+                            row = (prevPos.row - 1) % D;
+                            col = (prevPos.col + 1) % D;
+                            
+                            if (row < 0) row += D;
+                            if (col < 0) col += D;
+                            
+                            // 冲突时向下移动
+                            if (square[row][col] !== 0) {
+                                row = (prevPos.row + 1) % D;
+                                col = prevPos.col;
+                                if (row < 0) row += D;
+                            }
+                        } else {
+                            //  fallback 位置
+                            row = (fillOrder - 1) % D;
+                            col = Math.floor((fillOrder - 1) / D);
+                        }
+                    }
+                    
+                    square[row][col] = item.num;
+                    positionMap.set(item.num, { row, col });
+                    fillOrder++;
+                }
+            }
+            
+            // 确保所有位置都被填充
+            if (filled.size < D_squared) {
+                let currentNum = 1;
+                for (let i = 0; i < D; i++) {
+                    for (let j = 0; j < D; j++) {
+                        if (square[i][j] === 0) {
+                            while (filled.has(currentNum)) {
+                                currentNum++;
+                            }
+                            square[i][j] = currentNum;
+                            filled.add(currentNum);
+                            positionMap.set(currentNum, { row: i, col: j });
+                            currentNum++;
+                        }
+                    }
+                }
+            }
+            
+            // 上下翻转，让1在下方
+            square.reverse();
+            
+            return { square, allPaths };
+        }
+
+        function generateDallMagicSquare(D, recordSteps = true) {
+            const result = weaveMagicSquare(D);
+            return result;
+        }
+
+        function verifyMagicSquare(square) {
+            const D = square.length;
+            const params = getCoreParameters(D);
+            const expectedSum = params.magic_sum;
+            
+            const verificationResult = {
+                row_check: true,
+                column_check: true,
+                main_diag_check: true,
+                anti_diag_check: true,
+                pan_diag_check: true,
+                value_check: true,
+                all_passed: true
+            };
+            
+            for (let i = 0; i < D; i++) {
+                const rowSum = square[i].reduce((a, b) => a + b, 0);
+                if (rowSum !== expectedSum) {
+                    verificationResult.row_check = false;
+                    verificationResult.all_passed = false;
+                    break;
+                }
+            }
+            
+            for (let j = 0; j < D; j++) {
+                let colSum = 0;
+                for (let i = 0; i < D; i++) {
+                    colSum += square[i][j];
+                }
+                if (colSum !== expectedSum) {
+                    verificationResult.column_check = false;
+                    verificationResult.all_passed = false;
+                    break;
+                }
+            }
+            
+            let mainDiagSum = 0;
+            for (let i = 0; i < D; i++) {
+                mainDiagSum += square[i][i];
+            }
+            if (mainDiagSum !== expectedSum) {
+                verificationResult.main_diag_check = false;
+                verificationResult.all_passed = false;
+            }
+            
+            let antiDiagSum = 0;
+            for (let i = 0; i < D; i++) {
+                antiDiagSum += square[i][D - 1 - i];
+            }
+            if (antiDiagSum !== expectedSum) {
+                verificationResult.anti_diag_check = false;
+                verificationResult.all_passed = false;
+            }
+            
+            const values = new Set();
+            for (let i = 0; i < D; i++) {
+                for (let j = 0; j < D; j++) {
+                    const val = square[i][j];
+                    if (val < 1 || val > D * D || values.has(val)) {
+                        verificationResult.value_check = false;
+                        verificationResult.all_passed = false;
+                        break;
+                    }
+                    values.add(val);
+                }
+                if (!verificationResult.value_check) {
+                    break;
+                }
+            }
+            
+            return verificationResult;
+        }
+
+        function printSquare(square, mainVectors) {
+            const D = square.length;
+            const middleCol = Math.floor(D / 2);
+            
+            let fontSize, padding, borderWidth;
+            if (D <= 15) {
+                fontSize = '18px';
+                padding = '8px';
+                borderWidth = '2px';
+            } else if (D <= 31) {
+                fontSize = '14px';
+                padding = '6px';
+                borderWidth = '1.5px';
+            } else if (D <= 63) {
+                fontSize = '10px';
+                padding = '4px';
+                borderWidth = '1px';
+            } else {
+                fontSize = '8px';
+                padding = '2px';
+                borderWidth = '0.5px';
+            }
+            
+            let html = `<table class="magic-grid" style="font-size: ${fontSize}; border-collapse: collapse;">`;
+            
+            for (let i = 0; i < square.length; i++) {
+                html += '<tr>';
+                for (let j = 0; j < square[i].length; j++) {
+                    const num = square[i][j];
+                    const vectors = findVectors(num, mainVectors);
+                    let classes = [];
+                    if (vectors.v1) classes.push('vector-v1');
+                    if (vectors.v2) classes.push('vector-v2');
+                    if (vectors.v3) classes.push('vector-v3');
+                    if (vectors.v4) classes.push('vector-v4');
+                    
+                    html += `<td class="${classes.join(' ')}" style="padding: ${padding}; border: ${borderWidth} solid #667eea; cursor: pointer; aspect-ratio: 1; min-width: 30px; min-height: 30px;" data-num="${num}" data-row="${i}" data-col="${j}">${num}</td>`;
+                }
+                html += '</tr>';
+            }
+            
+            html += '</table>';
+            return html;
+        }
+
+        function showCellInfo(num, row, col, D, mainVectors, event) {
+            const cellInfo = document.getElementById('cell-info');
+            const cellInfoContent = document.getElementById('cell-info-content');
+            
+            // 确定宫位类型
+            let nodeType = '';
+            let nodeTypeEn = '';
+            if (num === 1 || num === 2 || num === 3) {
+                nodeType = '起点宫位';
+                nodeTypeEn = 'Start Node';
+            } else if (num === D * D) {
+                nodeType = 'D²宫位';
+                nodeTypeEn = 'D² Node';
+            } else if (num % D === 0) {
+                nodeType = `${Math.floor(num/D)}D宫位`;
+                nodeTypeEn = `${Math.floor(num/D)}D Node`;
+            } else {
+                nodeType = '自然节点';
+                nodeTypeEn = 'Natural Node';
+            }
+            
+            // 计算向量步长
+            const D_squared = D * D;
+            const v0Step = 1;
+            const v1Step = D + 1;
+            const v2Step = D + 2;
+            const v3aStep = D + 3;
+            const v3bStep = 2 * D + 3;
+            
+            // 生成节点信息
+            let formulaInfo = `
+                <strong>数值: ${num}</strong><br><span style="font-size: 11px; color: #666;">Value: ${num}</span><br>
+                <strong>位置:</strong> (${row}, ${col})<br><span style="font-size: 11px; color: #666;">Position: (${row}, ${col})</span><br>
+                <strong>类型:</strong> ${nodeType}<br><span style="font-size: 11px; color: #666;">Type: ${nodeTypeEn}</span><br><br>
+                <strong>向量步长信息:</strong><br><span style="font-size: 11px; color: #666;">Vector Step Information:</span><br>
+                <strong style="color: #ff8c00;">V0-点:</strong> 步长：${num}次（N+1）<br><span style="font-size: 11px; color: #666;"><strong style="color: #ff8c00;">V0-Point:</strong> Step: ${num} times (N+1)</span><br>
+                <strong style="color: #17a2b8;">V1-线:</strong> 步长：φk=D+1=${v1Step}<br><span style="font-size: 11px; color: #666;"><strong style="color: #17a2b8;">V1-Line:</strong> Step: φk=D+1=${v1Step}</span><br>
+                <strong style="color: #28a745;">V2-面:</strong> 步长：φk=D+2=${v2Step}<br><span style="font-size: 11px; color: #666;"><strong style="color: #28a745;">V2-Plane:</strong> Step: φk=D+2=${v2Step}</span><br>
+                <strong style="color: #dc3545;">V3-体:</strong> 步长：φk=D+3=${v3aStep} / φk=2D+3=${v3bStep}<br><span style="font-size: 11px; color: #666;"><strong style="color: #dc3545;">V3-Volume:</strong> Step: φk=D+3=${v3aStep} / φk=2D+3=${v3bStep}</span><br>
+            `;
+            
+            cellInfoContent.innerHTML = formulaInfo;
+            
+            // 设置浮窗位置
+            if (event) {
+                cellInfo.style.left = (event.pageX + 10) + 'px';
+                cellInfo.style.top = (event.pageY + 10) + 'px';
+            }
+            
+            cellInfo.classList.add('show');
+        }
+
+        function hideCellInfo() {
+            document.getElementById('cell-info').classList.remove('show');
+        }
+
+        function findMainVectors(square, D) {
+            const mainVectors = {
+                v1: new Set(),
+                v2: new Set(),
+                v3: new Set(),
+                v4: new Set()
+            };
+            
+            let pos1 = null;
+            for (let i = 0; i < D; i++) {
+                for (let j = 0; j < D; j++) {
+                    if (square[i][j] === 1) {
+                        pos1 = {row: i, col: j};
+                        break;
+                    }
+                }
+                if (pos1) break;
+            }
+            
+            if (!pos1) return mainVectors;
+            
+            let currentRow = pos1.row;
+            let currentCol = pos1.col;
+            for (let i = 0; i < D; i++) {
+                mainVectors.v1.add(square[currentRow][currentCol]);
+                currentRow = (currentRow - 1 + D) % D;
+                currentCol = currentCol;
+            }
+            
+            currentRow = pos1.row;
+            currentCol = pos1.col;
+            for (let i = 0; i < D; i++) {
+                mainVectors.v2.add(square[currentRow][currentCol]);
+                currentCol = (currentCol + 1) % D;
+            }
+            
+            currentRow = pos1.row;
+            currentCol = pos1.col;
+            for (let i = 0; i < D; i++) {
+                mainVectors.v3.add(square[currentRow][currentCol]);
+                currentRow = (currentRow - 1 + D) % D;
+                currentCol = (currentCol + 1) % D;
+            }
+            
+            currentRow = pos1.row;
+            currentCol = pos1.col;
+            for (let i = 0; i < D; i++) {
+                mainVectors.v4.add(square[currentRow][currentCol]);
+                currentRow = (currentRow + 1) % D;
+                currentCol = (currentCol + 1) % D;
+            }
+            
+            return mainVectors;
+        }
+
+        function findVectors(num, mainVectors) {
+            return {
+                v1: mainVectors.v1.has(num),
+                v2: mainVectors.v2.has(num),
+                v3: mainVectors.v3.has(num),
+                v4: mainVectors.v4.has(num)
+            };
+        }
+
+        function bindCellEvents(D, mainVectors) {
+            const cells = document.querySelectorAll('#magic-square td');
+            cells.forEach(cell => {
+                cell.addEventListener('mouseenter', function(event) {
+                    const num = parseInt(this.getAttribute('data-num'));
+                    const row = parseInt(this.getAttribute('data-row'));
+                    const col = parseInt(this.getAttribute('data-col'));
+                    showCellInfo(num, row, col, D, mainVectors, event);
+                });
+                cell.addEventListener('mouseleave', function() {
+                    hideCellInfo();
+                });
+            });
+        }
+
+        function recordStep(stepNum, num, row, col, step, isJump, k, phiVal, vector) {
+            let description;
+            if (isJump) {
+                description = `N=${num} (≡0 mod D), 触发张力跳跃! 向量: V${k}, φ(K)=${phiVal}, 步长=${step}, 位置: (${row}, ${col})`;
+            } else {
+                description = `N=${num}, 基础向量 V0, 步长+1, 位置: (${row}, ${col})`;
+            }
+            generationSteps.push({
+                stepNum: stepNum,
+                num: num,
+                row: row,
+                col: col,
+                step: step,
+                isJump: isJump,
+                k: k,
+                phiVal: phiVal,
+                vector: vector,
+                description: description
+            });
+        }
+
+        function clearSteps() {
+            generationSteps = [];
+        }
+
+        function printVerificationResult(verificationResult, params) {
+            const D = params.D;
+            const expectedSum = params.magic_sum;
+            
+            let result = ``;
+            
+            result += `<div class="verification-item ${verificationResult.row_check ? 'pass' : 'fail'}">
+                <span>行和验证<br><span style="font-size: 12px; color: #666;">Row Sum Check</span></span>
+                <span class="result-badge ${verificationResult.row_check ? 'pass' : 'fail'}">${verificationResult.row_check ? '✓ 通过' : '✗ 失败'}<br><span style="font-size: 12px;">${verificationResult.row_check ? '✓ Pass' : '✗ Fail'}</span></span>
+            </div>`;
+            
+            result += `<div class="verification-item ${verificationResult.column_check ? 'pass' : 'fail'}">
+                <span>列和验证<br><span style="font-size: 12px; color: #666;">Column Sum Check</span></span>
+                <span class="result-badge ${verificationResult.column_check ? 'pass' : 'fail'}">${verificationResult.column_check ? '✓ 通过' : '✗ 失败'}<br><span style="font-size: 12px;">${verificationResult.column_check ? '✓ Pass' : '✗ Fail'}</span></span>
+            </div>`;
+            
+            result += `<div class="verification-item ${verificationResult.main_diag_check ? 'pass' : 'fail'}">
+                <span>主对角线验证<br><span style="font-size: 12px; color: #666;">Main Diagonal Check</span></span>
+                <span class="result-badge ${verificationResult.main_diag_check ? 'pass' : 'fail'}">${verificationResult.main_diag_check ? '✓ 通过' : '✗ 失败'}<br><span style="font-size: 12px;">${verificationResult.main_diag_check ? '✓ Pass' : '✗ Fail'}</span></span>
+            </div>`;
+            
+            result += `<div class="verification-item ${verificationResult.anti_diag_check ? 'pass' : 'fail'}">
+                <span>副对角线验证<br><span style="font-size: 12px; color: #666;">Anti-Diagonal Check</span></span>
+                <span class="result-badge ${verificationResult.anti_diag_check ? 'pass' : 'fail'}">${verificationResult.anti_diag_check ? '✓ 通过' : '✗ 失败'}<br><span style="font-size: 12px;">${verificationResult.anti_diag_check ? '✓ Pass' : '✗ Fail'}</span></span>
+            </div>`;
+            
+            result += `<div class="verification-item ${verificationResult.pan_diag_check ? 'pass' : 'fail'}">
+                <span>对角线验证<br><span style="font-size: 12px; color: #666;">Diagonal Check</span></span>
+                <span class="result-badge ${verificationResult.pan_diag_check ? 'pass' : 'fail'}">${verificationResult.pan_diag_check ? '✓ 通过' : '✗ 失败'}<br><span style="font-size: 12px;">${verificationResult.pan_diag_check ? '✓ Pass' : '✗ Fail'}</span></span>
+            </div>`;
+            
+            result += `<div class="verification-item ${verificationResult.value_check ? 'pass' : 'fail'}">
+                <span>数值完整性验证<br><span style="font-size: 12px; color: #666;">Value Integrity Check</span></span>
+                <span class="result-badge ${verificationResult.value_check ? 'pass' : 'fail'}">${verificationResult.value_check ? '✓ 通过' : '✗ 失败'}<br><span style="font-size: 12px;">${verificationResult.value_check ? '✓ Pass' : '✗ Fail'}</span></span>
+            </div>`;
+            
+            return result;
+        }
+
+        function downloadProcess(D) {
+            let text = `DALL 幻方运算过程 - D=${D}\n`;
+            text += `=======================================\n\n`;
+            text += `【1. 核心公式】\n`;
+            text += `f(N) = { (N + 1) mod ${D*D}, 当 N ≠ 0 mod ${D} 时\n`;
+            text += `       { (N + φ(K)) mod ${D*D}, 当 N ≡ 0 mod ${D} 时\n\n`;
+            
+            let kSet = [];
+            for (let k = 1; k < D; k++) {
+                for (let m = 1; m <= k; m++) {
+                    kSet.push(`+${m * D + k}`);
+                }
+            }
+            
+            text += `K 是数集，包含 ${D} 的所有向量步长集合\n`;
+            text += `D=${D} 时，K = {${kSet.join(', ')}}\n\n`;
+            text += `向量具有叠加态特性：\n`;
+            text += `  • V1 是基础张力向量\n`;
+            text += `  • V2 是 V1 的叠加扩展\n`;
+            text += `  • V3 是 V1+V2 的叠加态，同时拥有两种步长公式\n`;
+            text += `  • 更高阶向量是前序向量的叠加积累\n\n`;
+            text += `各向量的步长：\n`;
+            text += `  V1: 步长 +(${D}+1)\n`;
+            text += `  V2: 步长 +(${D}+2) 或 +(2${D}+2)\n`;
+            text += `  V3: 步长 +(${D}+3) 或 +(2${D}+3) 或 +(3${D}+3)\n`;
+            text += `  ...\n`;
+            text += `洛书整体 = V1 叠加 V2 叠加 V3 叠加 ... 叠加 V(${D}-1)\n\n`;
+            
+            text += `【2. 向量系统】\n`;
+            text += `V0 (基础向量): 步长 +1\n`;
+            for (let k = 1; k < D; k++) {
+                const steps = [];
+                for (let m = 1; m <= k; m++) {
+                    steps.push(`+${m * D + k}`);
+                }
+                text += `V${k} (张力向量): 步长 ${steps.join('/')}\n`;
+            }
+            text += `\n`;
+            
+            // 添加英文翻译
+            text += `=======================================\n`;
+            text += `DALL Magic Square Calculation Process - D=${D}\n`;
+            text += `=======================================\n\n`;
+            text += `【1. Core Formula】\n`;
+            text += `f(N) = { (N + 1) mod ${D*D}, when N ≠ 0 mod ${D}\n`;
+            text += `       { (N + φ(K)) mod ${D*D}, when N ≡ 0 mod ${D}\n\n`;
+            
+            text += `K is the set of all vector step sizes for ${D}\n`;
+            text += `For D=${D}, K = {${kSet.join(', ')}}\n\n`;
+            text += `Vectors have superposition properties:\n`;
+            text += `  • V1 is the basic tension vector\n`;
+            text += `  • V2 is the superposition extension of V1\n`;
+            text += `  • V3 is the superposition state of V1+V2, with two step formulas\n`;
+            text += `  • Higher-order vectors are the superposition accumulation of previous vectors\n\n`;
+            text += `Vector step sizes:\n`;
+            text += `  V1: step +(${D}+1)\n`;
+            text += `  V2: step +(${D}+2) or +(2${D}+2)\n`;
+            text += `  V3: step +(${D}+3) or +(2${D}+3) or +(3${D}+3)\n`;
+            text += `  ...\n`;
+            text += `Lo Shu as a whole = V1 + V2 + V3 + ... + V(${D}-1)\n\n`;
+            
+            text += `【2. Vector System】\n`;
+            text += `V0 (base vector): step +1\n`;
+            for (let k = 1; k < D; k++) {
+                const steps = [];
+                for (let m = 1; m <= k; m++) {
+                    steps.push(`+${m * D + k}`);
+                }
+                text += `V${k} (tension vector): step ${steps.join('/')}\n`;
+            }
+            text += `\n`;
+            
+            if (generationSteps.length > 0) {
+                text += `【3. Generation Steps】\n`;
+                generationSteps.forEach(step => {
+                    text += `Step ${step.stepNum}: ${step.description}\n`;
+                });
+            }
+            
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dall_magic_square_process_D${D}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadMatrixImage(square, D) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const cellSize = Math.max(30, Math.min(80, 400 / D));
+            const margin = 40;
+            const fontSize = Math.max(8, Math.min(24, cellSize / 2));
+            
+            canvas.width = D * cellSize + margin * 2;
+            canvas.height = D * cellSize + margin * 2 + 60;
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#333333';
+            ctx.font = `bold ${fontSize + 4}px Microsoft YaHei, Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText(`DALL 幻方 - D=${D}`, canvas.width / 2, 30);
+            
+            ctx.font = `bold ${fontSize}px Courier New, monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const middleCol = Math.floor(D / 2);
+            
+            for (let i = 0; i < D; i++) {
+                for (let j = 0; j < D; j++) {
+                    const x = margin + j * cellSize + cellSize / 2;
+                    const y = margin + 60 + i * cellSize + cellSize / 2;
+                    
+                    if (j === middleCol) {
+                        ctx.fillStyle = '#fff3cd';
+                    } else {
+                        ctx.fillStyle = '#ffffff';
+                    }
+                    ctx.fillRect(margin + j * cellSize, margin + 60 + i * cellSize, cellSize, cellSize);
+                    
+                    ctx.strokeStyle = '#667eea';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(margin + j * cellSize, margin + 60 + i * cellSize, cellSize, cellSize);
+                    
+                    ctx.fillStyle = '#333333';
+                    ctx.fillText(String(square[i][j]), x, y);
+                }
+            }
+            
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dall_magic_square_D${D}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function updateFormulaDisplay(D) {
+            currentD = D;
+            const params = getCoreParameters(D);
+            
+            const magic_sum = params.magic_sum;
+            const matrix_sum = D * D * (D * D + 1) / 2;
+            const volume_sum = D * D * D * (D * D + 1) / 2;
+            
+            document.getElementById('formula-d2').textContent = params.D_squared;
+            document.getElementById('param-sum').textContent = magic_sum;
+            document.getElementById('param-matrix-sum').textContent = matrix_sum;
+            document.getElementById('param-volume-sum').textContent = volume_sum;
+            document.getElementById('d-input').value = D;
+            document.getElementById('d-slider').value = D;
+            document.getElementById('mod-d-value').textContent = D;
+            document.getElementById('mod-d-value-2').textContent = D;
+        }
+
+        document.getElementById('d-slider').addEventListener('input', function() {
+            updateFormulaDisplay(parseInt(this.value));
+        });
+
+        document.getElementById('d-input').addEventListener('change', function() {
+            let D = parseInt(this.value);
+            if (D % 2 === 0) D += 1;
+            if (D < 3) D = 3;
+            if (D > 99) D = 99;
+            updateFormulaDisplay(D);
+        });
+
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const D = currentD;
+            const btn = document.getElementById('generate-btn');
+            const originalText = btn.textContent;
+            
+            btn.textContent = '⏳ 生成中...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                try {
+                    const startTime = Date.now();
+                    const { square, allPaths } = generateDallMagicSquare(D);
+                    currentMagicSquare = square;
+                    const mainVectors = findMainVectors(square, D);
+                    const params = getCoreParameters(D);
+                    const verificationResult = verifyMagicSquare(square);
+                    const endTime = Date.now();
+                    
+                    document.getElementById('result-section').style.display = 'block';
+                    
+                    // 生成向量路径展示
+                    let vectorsHtml = '';
+                    // 按层级、起点排序
+                    const sortedPaths = [...allPaths].sort((a, b) => {
+                        if (a.level !== b.level) {
+                            return a.level - b.level;
+                        }
+                        if (a.start !== b.start) {
+                            return a.start - b.start;
+                        }
+                        return a.name.localeCompare(b.name);
+                    });
+                    
+                    sortedPaths.forEach(vector => {
+                        let formula = '';
+                        if (vector.name === 'V4') {
+                            const D_squared = D * D;
+                            formula = `f(N) = N + 1 mod D² = D²(${D_squared})`;
+                        } else if (vector.name.startsWith('V1')) {
+                            formula = `Φ(k) = (1D+1) mod D²`;
+                        } else if (vector.name.startsWith('V2')) {
+                            if (vector.name === 'V2a' || vector.name === 'V2a(2)') {
+                                formula = `Φ(k) = (1D+2) mod D²`;
+                            } else {
+                                formula = `Φ(k) = (2D+2) mod D²`;
+                            }
+                        } else if (vector.name.startsWith('V3')) {
+                            if (vector.name === 'V3a' || vector.name === 'V3a(2)' || vector.name === 'V3a(3)') {
+                                formula = `Φ(k) = (1D+3) mod D²`;
+                            } else if (vector.name === 'V3b' || vector.name === 'V3b(2)' || vector.name === 'V3b(3)') {
+                                formula = `Φ(k) = (2D+3) mod D²`;
+                            } else {
+                                formula = `Φ(k) = (3D+3) mod D²`;
+                            }
+                        }
+                        // 为不同层级设置不同颜色
+                        let levelColor = '#667eea'; // 默认颜色
+                        switch(vector.level) {
+                            case 0: levelColor = '#ff8c00'; break; // V4 高维骨架 - 深橙色
+                            case 1: levelColor = '#17a2b8'; break; // V1 线 - 青色
+                            case 2: levelColor = '#28a745'; break; // V2 面 - 绿色
+                            case 3: levelColor = '#dc3545'; break; // V3 体 - 红色
+                        }
+                        
+                        vectorsHtml += `<div style="margin: 10px 0; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">`;
+                        // 添加向量类型描述
+                        let vectorType = '';
+                        let vectorTypeEn = '';
+                        switch(vector.level) {
+                            case 0: 
+                                vectorType = '-高维骨架'; 
+                                vectorTypeEn = '-High-Dimension'; 
+                                break;
+                            case 1: 
+                                vectorType = '-线'; 
+                                vectorTypeEn = '-Line'; 
+                                break;
+                            case 2: 
+                                vectorType = '-面'; 
+                                vectorTypeEn = '-Plane'; 
+                                break;
+                            case 3: 
+                                vectorType = '-体'; 
+                                vectorTypeEn = '-Volume'; 
+                                break;
+                        }
+                        vectorsHtml += `<strong style="color: ${levelColor};">${vector.name}${vectorType} (层级${vector.level})</strong><br><span style="font-size: 12px; color: #666;">${vector.name}${vectorTypeEn} (Level ${vector.level})</span>`;
+                        vectorsHtml += `<span style="margin-left: 15px; font-weight: bold; color: #c41e3a; font-family: 'Computer Modern', 'Latin Modern Math', 'DejaVu Serif', 'Times New Roman', serif;">${formula}</span>`;
+                        vectorsHtml += `<br><br>`;
+                        const D_squared = D * D;
+                        let pathHtml = '';
+                        vector.path.forEach((num, index) => {
+                            if (index === 0) {
+                                // 首个数字加粗并使用层级颜色
+                                pathHtml += `<span style="font-weight: bold; color: ${levelColor};">${num}</span>`;
+                            } else {
+                                pathHtml += num;
+                            }
+                            if (index < vector.path.length - 1) {
+                                // 计算下一步的步长
+                                const nextNum = vector.path[index + 1];
+                                let step = nextNum - num;
+                                if (step < 0) step += D_squared;
+                                
+                                // 检查是否需要添加mod标记
+                                if (num + step > D_squared) {
+                                    pathHtml += `<span style="font-size: 14px; font-weight: bold; color: #c41e3a; margin: 0 5px;">M</span>`;
+                                } else {
+                                    pathHtml += '→';
+                                }
+                            }
+                        });
+                        vectorsHtml += `<span style="font-family: 'Roboto Mono', 'Consolas', 'Monaco', 'Source Code Pro', 'SF Mono', 'Courier New', monospace; letter-spacing: -0.5px;">${pathHtml}</span>`;
+                        vectorsHtml += `</div>`;
+                    });
+                    
+                    // 显示向量路径
+                    document.getElementById('vector-paths').style.display = 'block';
+                    document.getElementById('vector-paths-content').innerHTML = vectorsHtml;
+                    
+                    document.getElementById('magic-square').innerHTML = 
+                        `<div class="section-title" style="text-align: center;">生成D=<span id="display-d">${D}</span>的完美幻方<br><span style="font-size: 14px; color: #666;">Generate Perfect Magic Square for D=${D}</span></div>` +
+                        printSquare(square, mainVectors) +
+                        `<p style="margin-top: 15px; margin-bottom: 15px; font-size: 14px; text-align: center;">
+                            矩阵大小: ${D}×${D} = ${D*D} 个节点（时空织点）<br>
+                            <span style="font-size: 12px; color: #666;">Matrix Size: ${D}×${D} = ${D*D} nodes (Spacetime Range)</span>
+                        </p>` +
+                        `<p style="margin-bottom: 15px; font-size: 14px; text-align: center;">
+                            <span style="color: #17a2b8; font-weight: bold;">● V1-线</span> &nbsp;
+                            <span style="color: #28a745; font-weight: bold;">● V2-面</span> &nbsp;
+                            <span style="color: #dc3545; font-weight: bold;">● V3-体</span> &nbsp;
+                            <span style="color: #ffc107; font-weight: bold;">● V4-高维骨架</span><br>
+                            <span style="font-size: 12px; color: #666;">
+                                <span style="color: #17a2b8; font-weight: bold;">● V1-Line</span> &nbsp;
+                                <span style="color: #28a745; font-weight: bold;">● V2-Plane</span> &nbsp;
+                                <span style="color: #dc3545; font-weight: bold;">● V3-Volume</span> &nbsp;
+                                <span style="color: #ffc107; font-weight: bold;">● V4-High-Dimension</span>
+                            </span>
+                        </p>`;
+                    
+                    bindCellEvents(D, mainVectors);
+                    
+                    const downloadSection = document.getElementById('download-section');
+                    downloadSection.style.display = 'block';
+                    
+                    document.getElementById('download-image-btn').addEventListener('click', function() {
+                        downloadMatrixImage(square, D);
+                    });
+                    
+                    document.getElementById('download-process-btn').addEventListener('click', function() {
+                        downloadProcess(D);
+                    });
+                    
+                    document.getElementById('verification-result').innerHTML = printVerificationResult(verificationResult, params);
+                    
+                    const finalResult = document.getElementById('final-result');
+                    finalResult.className = 'final-result ' + (verificationResult.all_passed ? 'pass' : 'fail');
+                    finalResult.innerHTML = verificationResult.all_passed ? 
+                        `✅ 最终验证结论：验证通过！ (${(endTime - startTime).toFixed(0)}ms)<br><span style="font-size: 16px;">✅ Final Verification Conclusion: Passed! (${(endTime - startTime).toFixed(0)}ms)</span>` : 
+                        '❌ 最终验证结论：验证失败！<br><span style="font-size: 16px;">❌ Final Verification Conclusion: Failed!</span>';
+                    
+                } catch (error) {
+                    alert('生成幻方时出错：' + error.message);
+                } finally {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }
+            }, 10);
+        });
+
+        window.onload = function() {
+            const D = 3;
+            updateFormulaDisplay(D);
+            const { square, allPaths } = generateDallMagicSquare(D);
+            currentMagicSquare = square;
+            const mainVectors = findMainVectors(square, D);
+            const params = getCoreParameters(D);
+            const verificationResult = verifyMagicSquare(square);
+            
+            document.getElementById('result-section').style.display = 'block';
+            
+            // 生成向量路径展示
+            let vectorsHtml = '';
+            // 按层级、起点排序
+            const sortedPaths = [...allPaths].sort((a, b) => {
+                if (a.level !== b.level) {
+                    return a.level - b.level;
+                }
+                if (a.start !== b.start) {
+                    return a.start - b.start;
+                }
+                return a.name.localeCompare(b.name);
+            });
+            
+            sortedPaths.forEach(vector => {
+                let formula = '';
+                if (vector.name === 'V4') {
+                    const D_squared = D * D;
+                    formula = `f(N) = N + 1 mod D² = D²(${D_squared})`;
+                } else if (vector.name.startsWith('V1')) {
+                    formula = `Φ(k) = (1D+1) mod D²`;
+                } else if (vector.name.startsWith('V2')) {
+                    if (vector.name === 'V2a' || vector.name === 'V2a(2)') {
+                        formula = `Φ(k) = (1D+2) mod D²`;
+                    } else {
+                        formula = `Φ(k) = (2D+2) mod D²`;
+                    }
+                } else if (vector.name.startsWith('V3')) {
+                    if (vector.name === 'V3a' || vector.name === 'V3a(2)' || vector.name === 'V3a(3)') {
+                        formula = `Φ(k) = (1D+3) mod D²`;
+                    } else if (vector.name === 'V3b' || vector.name === 'V3b(2)' || vector.name === 'V3b(3)') {
+                        formula = `Φ(k) = (2D+3) mod D²`;
+                    } else {
+                        formula = `Φ(k) = (3D+3) mod D²`;
+                    }
+                }
+                // 为不同层级设置不同颜色
+                let levelColor = '#667eea'; // 默认颜色
+                switch(vector.level) {
+                    case 0: levelColor = '#ffc107'; break; // V4 高维骨架 - 黄色
+                    case 1: levelColor = '#17a2b8'; break; // V1 线 - 青色
+                    case 2: levelColor = '#28a745'; break; // V2 面 - 绿色
+                    case 3: levelColor = '#dc3545'; break; // V3 体 - 红色
+                }
+                
+                vectorsHtml += `<div style="margin: 10px 0; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">`;
+                // 添加向量类型描述
+                let vectorType = '';
+                switch(vector.level) {
+                    case 0: vectorType = '-高维骨架'; break;
+                    case 1: vectorType = '-线'; break;
+                    case 2: vectorType = '-面'; break;
+                    case 3: vectorType = '-体'; break;
+                }
+                vectorsHtml += `<strong style="color: ${levelColor};">${vector.name}${vectorType} (层级${vector.level})</strong>`;
+                vectorsHtml += `<span style="margin-left: 15px; font-weight: bold; color: #c41e3a; font-family: 'Computer Modern', 'Latin Modern Math', 'DejaVu Serif', 'Times New Roman', serif;">${formula}</span>`;
+                vectorsHtml += `<br><br>`;
+                const D_squared = D * D;
+                let pathHtml = '';
+                vector.path.forEach((num, index) => {
+                    if (index === 0) {
+                        // 首个数字加粗并使用层级颜色
+                        pathHtml += `<span style="font-weight: bold; color: ${levelColor};">${num}</span>`;
+                    } else {
+                        pathHtml += num;
+                    }
+                    if (index < vector.path.length - 1) {
+                        // 计算下一步的步长
+                        const nextNum = vector.path[index + 1];
+                        let step = nextNum - num;
+                        if (step < 0) step += D_squared;
+                        
+                        // 检查是否需要添加mod标记
+                        if (num + step > D_squared) {
+                            pathHtml += `<span style="font-size: 14px; font-weight: bold; color: #c41e3a; margin: 0 5px;">M</span>`;
+                        } else {
+                            pathHtml += '→';
+                        }
+                    }
+                });
+                vectorsHtml += `<span style="font-family: 'Roboto Mono', 'Consolas', 'Monaco', 'Source Code Pro', 'SF Mono', 'Courier New', monospace; letter-spacing: -0.5px;">${pathHtml}</span>`;
+                vectorsHtml += `</div>`;
+            });
+            
+            // 显示向量路径
+            document.getElementById('vector-paths').style.display = 'block';
+            document.getElementById('vector-paths-content').innerHTML = vectorsHtml;
+            
+            document.getElementById('magic-square').innerHTML = 
+                `<div class="section-title" style="text-align: center;">生成D=<span id="display-d">${D}</span>的完美幻方</div>` +
+                printSquare(square, mainVectors) +
+                `<p style="margin-top: 15px; margin-bottom: 15px; font-size: 14px; text-align: center;">
+                    矩阵大小: ${D}×${D} = ${D*D} 个节点（时空织点）
+                </p>` +
+                `<p style="margin-bottom: 15px; font-size: 14px; text-align: center;">
+                    <span style="color: #17a2b8; font-weight: bold;">● V1-线</span> &nbsp;
+                    <span style="color: #28a745; font-weight: bold;">● V2-面</span> &nbsp;
+                    <span style="color: #dc3545; font-weight: bold;">● V3-体</span> &nbsp;
+                    <span style="color: #ffc107; font-weight: bold;">● V4-高维骨架</span>
+                </p>`;
+            
+            bindCellEvents(D, mainVectors);
+            
+            const downloadSection = document.getElementById('download-section');
+            downloadSection.style.display = 'block';
+            
+            document.getElementById('download-image-btn').addEventListener('click', function() {
+                downloadMatrixImage(square, D);
+            });
+            
+            document.getElementById('download-process-btn').addEventListener('click', function() {
+                downloadProcess(D);
+            });
+            
+            document.getElementById('verification-result').innerHTML = printVerificationResult(verificationResult, params);
+            
+            const finalResult = document.getElementById('final-result');
+            finalResult.className = 'final-result ' + (verificationResult.all_passed ? 'pass' : 'fail');
+            finalResult.textContent = verificationResult.all_passed ? 
+                `✅ 最终验证结论：验证通过！` : 
+                '❌ 最终验证结论：验证失败！';
+        };
+    </script>
+</body>
+</html>
